@@ -1,25 +1,17 @@
 package com.uwan.weatherapp
 
-import android.graphics.Color;
-import android.os.Build
+
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.RequiresApi
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.ads.AdRequest;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,42 +19,37 @@ import java.text.DecimalFormat;
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var btnshow:Button
    lateinit var etCity: EditText
-   lateinit var etCountry:EditText
+   lateinit var txtcityname:TextView
     var tvResult: TextView? = null
     private val url = "https://api.openweathermap.org/data/2.5/weather"
     private val appid = "ad4b8c1c1a3315fdd473ce4b31bc5258"
-    @RequiresApi(Build.VERSION_CODES.N)
-    var df: DecimalFormat = DecimalFormat("#.##")
 
+    var df: DecimalFormat = DecimalFormat("#.##")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
-        var adRequest = AdRequest.Builder().build();
-
         etCity = findViewById(R.id.etCity);
-
+        btnshow=findViewById(R.id.btnGet)
         tvResult = findViewById(R.id.tvResult);
+        txtcityname=findViewById(R.id.textviewcityname)
+        btnshow.setOnClickListener{ view->
+            getWeatherDetails(view)
+        }
     }
 
-    open fun getWeatherDetails(view: View?) {
+     fun getWeatherDetails(view: View?) {
         var tempUrl = ""
-        val city: String = etCity.getText().toString().trim()
-        val country: String = etCountry.getText().toString().trim()
+        val city: String = etCity.text.toString().trim()
         if (city == "") {
             tvResult?.setText("City field can not be empty!")
         } else {
-            tempUrl = if (country != "") {
-                url.toString() + "?q=" + city + "," + country + "&appid=" + appid
-            } else {
-                url.toString() + "?q=" + city + "&appid=" + appid
-            }
+            tempUrl ="$url?q=$city&appid=$appid"
             val stringRequest =
-                StringRequest(Request.Method.POST, tempUrl, object : Response.Listener<String?> {
-                    override fun onResponse(response: String?) {
+                StringRequest(Request.Method.POST, tempUrl,
+                    { response ->
                         var output = ""
                         try {
                             val jsonResponse = JSONObject(response)
@@ -81,29 +68,25 @@ class MainActivity : AppCompatActivity() {
                             val jsonObjectSys = jsonResponse.getJSONObject("sys")
                             val countryName = jsonObjectSys.getString("country")
                             val cityName = jsonResponse.getString("name")
-                            tvResult?.setTextColor(Color.rgb(68, 134, 199))
-                            output += """Current weather of $cityName ($countryName)
-                                Temp: ${df.format(temp)} °C
-                             Feels Like: ${df.format(feelsLike)} °C
-                         Humidity: $humidity%
-                         Description: $description
-                                        Wind Speed: ${wind}m/s (meters per second)
-                             Cloudiness: $clouds%
-                                                 Pressure: $pressure hPa"""
-                            tvResult?.setText(output)
+                            txtcityname?.text="current weather in $cityName: "
+                            output += """
+                                |Temp: ${df.format(temp)}  
+                                |Humidity: $humidity% 
+                                |Description: $description 
+                                |Cloudiness: $clouds% 
+                                |Wind Speed: ${wind}m/s
+                                |Pressure: $pressure hPa""".trimMargin()
+                            tvResult?.text = output
                         } catch (e: JSONException) {
                             e.printStackTrace()
                         }
-                    }
-                }, object : Response.ErrorListener {
-                    override fun onErrorResponse(error: VolleyError) {
-                        Toast.makeText(
-                            applicationContext,
-                            error.toString().trim(),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                })
+                    }) { error ->
+                    Toast.makeText(
+                        applicationContext,
+                        error.toString().trim(),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             val requestQueue: RequestQueue = Volley.newRequestQueue(applicationContext)
             requestQueue.add(stringRequest)
         }

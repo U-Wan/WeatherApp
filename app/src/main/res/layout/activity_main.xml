@@ -5,57 +5,59 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity"
-    android:background="#e8f4f8"
+android:background="#a696c8"
     android:orientation="vertical"
     android:padding="16dp">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="40sp"
-        android:text="Weather"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-        </View>
+
         <EditText
+            android:id="@+id/etCity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etCity"
             android:layout_marginBottom="10dp"
             android:ems="10"
             android:hint="Enter City Name"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="#060608" />
 
         <Button
+            android:id="@+id/btnGet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btnGet"
             android:layout_marginBottom="10dp"
-            android:background="#0070c7"
-            android:textColor="@android:color/white"
-            android:onClick="getWeatherDetails"
-            android:text="Get"
+            android:background="#2470a0"
+            android:text="Show weather"
+            android:textColor="#060608"
             app:backgroundTint="@null" />
+
+        <TextView
+            android:id="@+id/textviewcityname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:textColor="#05445c"
+            android:textSize="30sp" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="150dp">
+
             <TextView
+                android:id="@+id/tvResult"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvResult" />
+                android:layout_marginStart="6dp"
+                android:textColor="#060608"
+                android:textSize="18sp" />
         </ScrollView>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-        </View>
+
 
     </LinearLayout>
 </LinearLayout>
